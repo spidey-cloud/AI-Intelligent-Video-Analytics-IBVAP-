@@ -1,0 +1,1874 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>IBVAP · Border Surveillance Console</title>
+    <style>
+      :root {
+        --bg: #0b1220;
+        --panel: #101a2e;
+        --panel2: #0d1526;
+        --line: #22304f;
+        --txt: #dce5f7;
+        --mut: #8ea0c0;
+        --acc: #f5a524;
+        --ok: #22c55e;
+        --warn: #f59e0b;
+        --bad: #ef4444;
+        --info: #38bdf8;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--txt);
+        font:
+          14px/1.45 system-ui,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+      }
+      .hidden {
+        display: none !important;
+      }
+      .mut {
+        color: var(--mut);
+      }
+      button {
+        font: inherit;
+      }
+      input,
+      select {
+        background: var(--panel2);
+        border: 1px solid var(--line);
+        color: var(--txt);
+        padding: 8px 10px;
+        border-radius: 8px;
+        width: 100%;
+        margin-top: 4px;
+      }
+      label {
+        display: block;
+        font-size: 12px;
+        color: var(--mut);
+      }
+      .btn {
+        background: #1b2946;
+        border: 1px solid var(--line);
+        color: var(--txt);
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .btn:hover {
+        border-color: var(--acc);
+      }
+      .btn.primary {
+        background: var(--acc);
+        border-color: var(--acc);
+        color: #1a1205;
+        font-weight: 600;
+      }
+      .btn.ghost {
+        background: transparent;
+      }
+      .btn.sm {
+        padding: 5px 10px;
+        font-size: 12px;
+      }
+      .btn.xs {
+        padding: 2px 8px;
+        font-size: 11px;
+      }
+      .btn.block {
+        width: 100%;
+        margin-top: 10px;
+      }
+      .badge {
+        background: var(--bad);
+        color: #fff;
+        border-radius: 10px;
+        padding: 0 8px;
+        font-size: 12px;
+      }
+      .chip {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 2px 10px;
+        font-size: 12px;
+        color: var(--mut);
+      }
+      .chip.ok {
+        color: var(--ok);
+        border-color: var(--ok);
+      }
+      .chip.warn {
+        color: var(--warn);
+        border-color: var(--warn);
+      }
+      .lnk {
+        color: var(--info);
+        text-decoration: none;
+        margin-right: 6px;
+      }
+      .lnk:hover {
+        text-decoration: underline;
+      }
+      .tag {
+        border-radius: 6px;
+        padding: 1px 8px;
+        font-size: 12px;
+      }
+      .t-intrusion {
+        background: rgba(239, 68, 68, 0.15);
+        color: #fca5a5;
+      }
+      .t-loitering {
+        background: rgba(245, 158, 11, 0.15);
+        color: #fcd34d;
+      }
+      .s-high {
+        background: rgba(239, 68, 68, 0.18);
+        color: #fca5a5;
+      }
+      .s-medium {
+        background: rgba(245, 158, 11, 0.18);
+        color: #fcd34d;
+      }
+      .s-low {
+        background: rgba(56, 189, 248, 0.15);
+        color: #7dd3fc;
+      }
+      .st {
+        color: var(--mut);
+        font-size: 12px;
+      }
+      /* login */
+      .login-wrap {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(
+          1200px 600px at 50% -100px,
+          #16233f,
+          var(--bg)
+        );
+      }
+      .login-card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 34px;
+        width: 360px;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+      }
+      .logo {
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        color: var(--acc);
+      }
+      .logo.small {
+        font-size: 18px;
+      }
+      .sub {
+        color: var(--mut);
+        font-size: 12px;
+        margin: 4px 0 20px;
+      }
+      .login-card input {
+        margin-top: 4px;
+      }
+      .err {
+        color: var(--bad);
+        font-size: 12px;
+        margin-top: 8px;
+        min-height: 14px;
+      }
+      .hint {
+        color: var(--mut);
+        font-size: 11px;
+        margin-top: 14px;
+        line-height: 1.6;
+      }
+      /* header */
+      header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 18px;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+      }
+      .hd-sub {
+        color: var(--mut);
+        font-size: 12px;
+      }
+      .sp {
+        flex: 1;
+      }
+      nav {
+        display: flex;
+        gap: 4px;
+        padding: 8px 18px;
+        background: var(--panel2);
+        border-bottom: 1px solid var(--line);
+      }
+      .tab {
+        background: transparent;
+        border: none;
+        color: var(--mut);
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .tab:hover {
+        color: var(--txt);
+      }
+      .tab.active {
+        background: #1b2946;
+        color: var(--acc);
+      }
+      main {
+        padding: 16px 18px;
+      }
+      /* live */
+      .live-wrap {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 16px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 12px;
+      }
+      .cam {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .cam-top {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 8px 10px;
+        font-size: 12px;
+        border-bottom: 1px solid var(--line);
+        flex-wrap: wrap;
+      }
+      .cam img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16/9;
+        object-fit: contain;
+        background: #000;
+      }
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--mut);
+        flex: none;
+      }
+      .dot.on {
+        background: var(--ok);
+        box-shadow: 0 0 8px var(--ok);
+      }
+      .dot.off {
+        background: var(--bad);
+      }
+      .alerts {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        max-height: calc(100vh - 130px);
+        overflow: auto;
+      }
+      .alerts h2 {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--mut);
+        margin-bottom: 10px;
+      }
+      .alert {
+        border: 1px solid var(--line);
+        border-left-width: 4px;
+        border-radius: 8px;
+        padding: 8px 10px;
+        margin-bottom: 8px;
+        font-size: 12.5px;
+        background: var(--panel2);
+      }
+      .alert .a-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 3px;
+      }
+      .sev-high {
+        border-left-color: var(--bad);
+      }
+      .sev-medium {
+        border-left-color: var(--warn);
+      }
+      .sev-low {
+        border-left-color: var(--info);
+      }
+      /* tables */
+      .tbl {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+        font-size: 13px;
+      }
+      .tbl th {
+        background: var(--panel2);
+        text-align: left;
+        color: var(--mut);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        padding: 9px 12px;
+      }
+      .tbl td {
+        padding: 8px 12px;
+        border-top: 1px solid var(--line);
+        vertical-align: middle;
+      }
+      .filters {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .filters select,
+      .filters input {
+        width: auto;
+        min-width: 160px;
+        margin-top: 0;
+      }
+      #evCount {
+        font-size: 12px;
+      }
+      /* zones */
+      .zone-wrap {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 16px;
+      }
+      .zone-side {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px;
+      }
+      .zone-side h3 {
+        margin: 14px 0 8px;
+        font-size: 12px;
+        color: var(--mut);
+        text-transform: uppercase;
+      }
+      .btnrow {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .zlist {
+        list-style: none;
+        font-size: 13px;
+      }
+      .zlist li {
+        padding: 6px 4px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .zone-canvas-wrap {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #zCanvas {
+        width: 100%;
+        max-width: 820px;
+        aspect-ratio: 16/9;
+        border-radius: 8px;
+        background: #0a0f1a;
+        cursor: crosshair;
+      }
+      /* admin */
+      .admin-wrap {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 16px;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px;
+      }
+      .panel h3 {
+        margin-bottom: 10px;
+      }
+      @media (max-width: 980px) {
+        .live-wrap,
+        .zone-wrap,
+        .admin-wrap {
+          grid-template-columns: 1fr;
+        }
+        .alerts {
+          max-height: 300px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ======================= LOGIN ======================= -->
+    <div id="login" class="login-wrap">
+      <div class="login-card">
+        <div class="logo">IBVAP</div>
+        <div class="sub">Intelligent Border Video Analytics Platform</div>
+        <label>Username<input id="lu" autocomplete="username" /></label>
+        <label
+          >Password<input
+            id="lp"
+            type="password"
+            autocomplete="current-password"
+        /></label>
+        <button id="lbtn" class="btn primary block">Sign in</button>
+        <div id="lerr" class="err"></div>
+        <div class="hint">
+          Demo accounts<br />admin / admin123 · operator / operator123 · viewer
+          / viewer123
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================= APP ======================= -->
+    <div id="app" class="hidden">
+      <header>
+        <div class="logo small">IBVAP</div>
+        <div class="hd-sub">Border Surveillance Console</div>
+        <div class="sp"></div>
+        <span id="conn" class="chip">connecting…</span>
+        <span id="camstat" class="chip">…</span>
+        <span id="who" class="mut" style="font-size: 12px"></span>
+        <button
+          id="sndBtn"
+          class="btn ghost sm"
+          title="Alert sound on/off"
+          onclick="toggleSound()"
+        >
+          🔔
+        </button>
+        <button id="logout" class="btn ghost sm">Logout</button>
+      </header>
+      <nav>
+        <button class="tab active" data-tab="live">Live View</button>
+        <button class="tab" data-tab="events">Events</button>
+        <button class="tab" data-tab="reports">Reports</button>
+        <button class="tab" data-tab="map">Map</button>
+        <button class="tab" data-tab="zones">Zone Editor</button>
+        <button
+          class="tab"
+          data-tab="cameras"
+          id="camTab"
+          style="display: none"
+        >
+          Cameras
+        </button>
+        <button
+          class="tab"
+          data-tab="admin"
+          id="adminTab"
+          style="display: none"
+        >
+          Admin
+        </button>
+      </nav>
+      <main>
+        <!-- live view -->
+        <section id="tab-live" class="tabpane">
+          <div class="live-wrap">
+            <div id="grid" class="grid"></div>
+            <aside class="alerts">
+              <h2>Live Alerts <span id="alertcount" class="badge">0</span></h2>
+              <div id="alerts"></div>
+            </aside>
+          </div>
+        </section>
+
+        <!-- events -->
+        <section id="tab-events" class="tabpane hidden">
+          <div class="filters">
+            <select id="fCam">
+              <option value="">All cameras</option>
+            </select>
+            <select id="fType">
+              <option value="">All types</option>
+              <option>intrusion</option>
+              <option>loitering</option>
+            </select>
+            <input id="fQ" placeholder="Search class / camera / type…" />
+            <button id="fGo" class="btn sm">Search</button>
+            <span class="mut" id="evCount"></span>
+          </div>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Time (UTC)</th>
+                <th>Camera</th>
+                <th>Type</th>
+                <th>Class</th>
+                <th>Severity</th>
+                <th>Conf</th>
+                <th>Status</th>
+                <th>Zone</th>
+                <th>Evidence</th>
+              </tr>
+            </thead>
+            <tbody id="evBody"></tbody>
+          </table>
+        </section>
+
+        <!-- zone editor -->
+        <section id="tab-zones" class="tabpane hidden">
+          <div class="zone-wrap">
+            <div class="zone-side">
+              <label>Camera<select id="zCam"></select></label>
+              <button id="zLoad" class="btn sm block">Load latest frame</button>
+              <label style="margin-top: 10px"
+                >Zone name<input id="zName" value="Perimeter zone"
+              /></label>
+              <label
+                >Kind
+                <select id="zKind">
+                  <option value="perimeter">perimeter</option>
+                  <option value="restricted">restricted</option>
+                  <option value="area">area</option>
+                </select>
+              </label>
+              <div class="btnrow">
+                <button id="zSave" class="btn sm primary">Save zone</button>
+                <button id="zClear" class="btn sm">Clear sketch</button>
+              </div>
+              <p class="mut" style="font-size: 11px; margin-top: 10px">
+                Click on the frame to drop polygon points (minimum 3). Zones are
+                stored in normalised coordinates and scale with camera
+                resolution.
+              </p>
+              <h3>Existing zones</h3>
+              <ul id="zList" class="zlist"></ul>
+            </div>
+            <div class="zone-canvas-wrap">
+              <canvas id="zCanvas" width="640" height="360"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- reports -->
+        <section id="tab-reports" class="tabpane hidden">
+          <div class="filters">
+            <label
+              >Window
+              <select id="rDays" style="width: auto; margin-top: 0">
+                <option value="1">24 hours</option>
+                <option value="7" selected>7 days</option>
+                <option value="30">30 days</option>
+              </select>
+            </label>
+            <button id="rGo" class="btn sm">Refresh</button>
+            <span class="mut" id="rMeta"></span>
+          </div>
+          <div
+            id="rCards"
+            class="grid"
+            style="
+              grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+              margin-bottom: 14px;
+            "
+          ></div>
+          <div
+            style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px"
+          >
+            <div class="panel">
+              <h3>Events per day</h3>
+              <div id="rChart"></div>
+            </div>
+            <div>
+              <div class="panel" style="margin-bottom: 14px">
+                <h3>By type / severity</h3>
+                <div id="rMix"></div>
+              </div>
+              <div class="panel">
+                <h3>By camera</h3>
+                <table class="tbl" style="font-size: 12px">
+                  <thead>
+                    <tr>
+                      <th>Camera</th>
+                      <th>Events</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rCamBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- map -->
+        <section id="tab-map" class="tabpane hidden">
+          <div class="zone-wrap">
+            <div class="zone-side">
+              <h3 style="margin-top: 0">BOPs &amp; cameras</h3>
+              <p class="mut" style="font-size: 11px">
+                Schematic plot from BOP lat/lng (no external map tiles — works
+                offline on the SSB network). Click a BOP to focus its cameras.
+              </p>
+              <div id="mapList" style="margin-top: 10px"></div>
+            </div>
+            <div class="zone-canvas-wrap">
+              <div id="mapSvg" style="width: 100%; max-width: 900px"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- cameras -->
+        <section id="tab-cameras" class="tabpane hidden">
+          <div class="admin-wrap">
+            <div>
+              <h3 style="margin-bottom: 8px">Registered cameras</h3>
+              <table class="tbl">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>BOP</th>
+                    <th>Source</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="camBody"></tbody>
+              </table>
+            </div>
+            <div class="panel">
+              <h3>Register camera</h3>
+              <label>BOP<select id="cBop"></select></label>
+              <label
+                >Name<input id="cName" placeholder="CAM-05 · East Gate"
+              /></label>
+              <label
+                >Source type
+                <select id="cType">
+                  <option value="rtsp">RTSP (real camera)</option>
+                  <option value="video">Video file (loop)</option>
+                  <option value="synthetic">Synthetic scene (demo)</option>
+                </select>
+              </label>
+              <label id="lUrl"
+                >Stream URL<input
+                  id="cUrl"
+                  placeholder="rtsp://192.168.x.x:8080/h264_ulaw.sdp  or  http://xxx.xxx.x.x:8080/video"
+              /></label>
+              <label id="lPath" class="hidden"
+                >Video path<input id="cPath" placeholder="data/videos/clip.mp4"
+              /></label>
+              <label id="lScene" class="hidden"
+                >Scene
+                <select id="cScene">
+                  <option value="north-gate">north-gate (IR night)</option>
+                  <option value="west-approach">west-approach (day)</option>
+                  <option value="checkpoint">checkpoint (dusk)</option>
+                </select>
+              </label>
+              <button id="cAdd" class="btn primary block">Add camera</button>
+              <p class="mut" style="font-size: 11px; margin-top: 8px">
+                Comes online in ~10 s, then draw its zones in the Zone Editor.
+                Real SSB cameras connect by RTSP URL over the existing VPN — no
+                hardware changes.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- admin -->
+        <section id="tab-admin" class="tabpane hidden">
+          <div class="admin-wrap">
+            <div>
+              <table class="tbl">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Name</th>
+                    <th>Created</th>
+                  </tr>
+                </thead>
+                <tbody id="uBody"></tbody>
+              </table>
+            </div>
+            <div class="panel">
+              <h3>Create user (RBAC)</h3>
+              <label>Username<input id="nuU" /></label>
+              <label>Password<input id="nuP" type="password" /></label>
+              <label
+                >Role
+                <select id="nuR">
+                  <option>viewer</option>
+                  <option selected>operator</option>
+                  <option>admin</option>
+                </select>
+              </label>
+              <label>Full name<input id="nuN" /></label>
+              <button id="nuAdd" class="btn primary block">Add user</button>
+            </div>
+          </div>
+          <div class="panel" style="margin-top: 14px">
+            <h3>
+              Audit trail
+              <span class="mut" style="font-weight: 400"
+                >(who changed what, when)</span
+              >
+            </h3>
+            <table class="tbl" style="max-height: 260px; overflow: auto">
+              <thead>
+                <tr>
+                  <th>When</th>
+                  <th>User</th>
+                  <th>Action</th>
+                  <th>Detail</th>
+                </tr>
+              </thead>
+              <tbody id="audBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      "use strict";
+      let token = localStorage.getItem("ibvap_token") || "";
+      let me = null;
+      const $ = (s) => document.querySelector(s);
+
+      async function api(path, opts = {}) {
+        opts.headers = Object.assign(
+          { "Content-Type": "application/json" },
+          opts.headers || {},
+        );
+        if (token) opts.headers["Authorization"] = "Bearer " + token;
+        const r = await fetch(path, opts);
+        if (r.status === 401) {
+          showLogin();
+          throw new Error("unauthorized");
+        }
+        if (!r.ok) {
+          let d = r.statusText;
+          try {
+            d = (await r.json()).detail || d;
+          } catch (e) {}
+          throw new Error(d);
+        }
+        return r.status === 204 ? null : r.json();
+      }
+
+      function showLogin() {
+        if (loggingIn) return;
+        teardown();
+        token = "";
+        me = null;
+        $("#app").classList.add("hidden");
+        $("#login").classList.remove("hidden");
+      }
+      function showApp() {
+        $("#login").classList.add("hidden");
+        $("#app").classList.remove("hidden");
+        boot();
+      }
+
+      /* ---------------- auth ---------------- */
+      $("#lbtn").onclick = login;
+      $("#lp").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") login();
+      });
+      async function login() {
+        initAudio(); // login click is the user gesture that unlocks WebAudio
+        loggingIn = true;
+        try {
+          const r = await api("/api/auth/login", {
+            method: "POST",
+            body: JSON.stringify({
+              username: $("#lu").value,
+              password: $("#lp").value,
+            }),
+          });
+          token = r.token;
+          me = r.user;
+          localStorage.setItem("ibvap_token", token);
+          $("#who").textContent = me.username + " · " + me.role;
+          $("#adminTab").style.display = me.role === "admin" ? "" : "none";
+          loggingIn = false;
+          showApp();
+        } catch (e) {
+          loggingIn = false;
+          $("#lerr").textContent = "Invalid credentials";
+        }
+      }
+      function teardown() {
+        if (statusTimer) {
+          clearInterval(statusTimer);
+          statusTimer = null;
+        }
+        if (pollTimer) {
+          clearInterval(pollTimer);
+          pollTimer = null;
+        }
+        if (ws) {
+          ws.onclose = null;
+          ws.onerror = null;
+          try {
+            ws.close();
+          } catch (e) {}
+          ws = null;
+        }
+        $("#conn").textContent = "connecting…";
+        $("#conn").className = "chip";
+      }
+      $("#logout").onclick = () => {
+        teardown();
+        token = "";
+        me = null;
+        localStorage.removeItem("ibvap_token");
+        sessionStorage.clear();
+        $("#app").classList.add("hidden");
+        $("#login").classList.remove("hidden");
+        $("#lu").value = "";
+        $("#lp").value = "";
+        $("#lerr").textContent = "";
+      };
+
+      /* ---------------- tabs ---------------- */
+      document.querySelectorAll(".tab").forEach(
+        (t) =>
+          (t.onclick = () => {
+            document
+              .querySelectorAll(".tab")
+              .forEach((x) => x.classList.remove("active"));
+            document
+              .querySelectorAll(".tabpane")
+              .forEach((x) => x.classList.add("hidden"));
+            t.classList.add("active");
+            $("#tab-" + t.dataset.tab).classList.remove("hidden");
+            if (t.dataset.tab === "events") loadEvents();
+            if (t.dataset.tab === "reports") loadReports();
+            if (t.dataset.tab === "map") loadMap();
+            if (t.dataset.tab === "zones") {
+              if (!$("#zCam").value)
+                loadCameras().then(() => {
+                  loadZoneList();
+                  loadZoneFrame(true);
+                });
+              else {
+                loadZoneList();
+                loadZoneFrame(true);
+              }
+            }
+            if (t.dataset.tab === "cameras") {
+              Promise.all([loadBops(), loadCamTable()]).catch((e) =>
+                console.error("cameras tab:", e),
+              );
+            }
+            if (t.dataset.tab === "admin" && me && me.role === "admin") {
+              loadUsers();
+              loadAudit();
+            }
+          }),
+      );
+
+      /* ---------------- cameras ---------------- */
+      async function loadCameras() {
+        const cams = await api("/api/cameras");
+        const grid = $("#grid");
+        grid.innerHTML = "";
+        cams.forEach((c, i) => {
+          const d = document.createElement("div");
+          d.className = "cam";
+          // Create img without src first, then set it with a stagger delay
+          d.innerHTML =
+            '<div class="cam-top"><span class="dot" data-cid="' +
+            c.id +
+            '"></span>' +
+            c.name +
+            '<span class="mut cam-fps" data-fps="' +
+            c.id +
+            '"></span></div>' +
+            '<img data-src="/stream/' +
+            c.id +
+            "?token=" +
+            encodeURIComponent(token) +
+            '" alt="' +
+            c.name +
+            '" style="aspect-ratio:16/9;width:100%;background:#000">';
+          grid.appendChild(d);
+          // Stagger stream connections by 800ms each to avoid browser throttling
+          setTimeout(() => {
+            const img = d.querySelector("img");
+            if (img) img.src = img.dataset.src;
+          }, i * 800);
+        });
+        const opts = cams
+          .map((c) => '<option value="' + c.id + '">' + c.name + "</option>")
+          .join("");
+        $("#fCam").innerHTML = '<option value="">All cameras</option>' + opts;
+        $("#zCam").innerHTML = opts;
+        $("#zCam").onchange = () => {
+          loadZoneList();
+          loadZoneFrame(true);
+        };
+      }
+      async function pollStatus() {
+        try {
+          const s = await api("/api/system/status");
+          const on = s.cameras.filter((c) => c.status === "online").length;
+          $("#camstat").textContent =
+            on + "/" + s.cameras.length + " cams online";
+          s.cameras.forEach((c) => {
+            const dot = document.querySelector('.dot[data-cid="' + c.id + '"]');
+            if (dot)
+              dot.className = "dot " + (c.status === "online" ? "on" : "off");
+            const fps = document.querySelector(
+              '.cam-fps[data-fps="' + c.id + '"]',
+            );
+            if (fps) fps.textContent = c.fps ? " · " + c.fps + " fps" : "";
+          });
+        } catch (e) {}
+      }
+
+      /* ---------------- alert sound ---------------- */
+      let actx = null;
+      let soundOn = localStorage.getItem("ibvap_sound") !== "0";
+      function initAudio() {
+        // needs a user gesture (login click) to unlock
+        try {
+          actx =
+            actx || new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+          actx = null;
+        }
+      }
+      function tone(freq, t0, dur, vol) {
+        const o = actx.createOscillator(),
+          g = actx.createGain();
+        o.type = "sine";
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(0, actx.currentTime + t0);
+        g.gain.linearRampToValueAtTime(vol, actx.currentTime + t0 + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + t0 + dur);
+        o.connect(g).connect(actx.destination);
+        o.start(actx.currentTime + t0);
+        o.stop(actx.currentTime + t0 + dur + 0.05);
+      }
+      function beepAlert(severity) {
+        if (!soundOn || !actx) return;
+        if (actx.state === "suspended") {
+          actx.resume().catch(() => {});
+          return;
+        }
+        if (severity === "high") {
+          tone(988, 0, 0.14, 0.25);
+          tone(1319, 0.16, 0.2, 0.25);
+        } else tone(660, 0, 0.22, 0.18);
+      }
+      window.toggleSound = () => {
+        soundOn = !soundOn;
+        localStorage.setItem("ibvap_sound", soundOn ? "1" : "0");
+        $("#sndBtn").textContent = soundOn ? "🔔" : "🔕";
+        if (soundOn) {
+          initAudio();
+          beepAlert("medium");
+        }
+      };
+      $("#sndBtn").textContent = soundOn ? "🔔" : "🔕";
+
+      /* ---------------- alerts ---------------- */
+      let alertN = 0;
+      const seen = new Set();
+      function pushAlert(ev, fromPoll) {
+        if (seen.has(ev.id)) return;
+        seen.add(ev.id);
+        if (ev.status === "active" && !fromPoll) beepAlert(ev.severity);
+        alertN++;
+        $("#alertcount").textContent = alertN;
+        const d = document.createElement("div");
+        d.className = "alert sev-" + ev.severity;
+        const t = new Date(ev.started_at).toLocaleTimeString();
+        d.innerHTML =
+          '<div class="a-top"><b>' +
+          ev.type.toUpperCase() +
+          '</b><span class="mut">' +
+          t +
+          "</span></div>" +
+          "<div>" +
+          ev.camera_name +
+          " · " +
+          (ev.class_name || "") +
+          " · zone: " +
+          (ev.zone_name || "—") +
+          "</div>" +
+          (ev.status === "active" && me && me.role !== "viewer"
+            ? '<button class="btn xs" style="margin-top:6px" onclick="ackEv(' +
+              ev.id +
+              ', this)">Acknowledge</button>'
+            : '<span class="st">' + ev.status + "</span>");
+        const list = $("#alerts");
+        list.prepend(d);
+        while (list.children.length > 60) list.lastChild.remove();
+      }
+      window.ackEv = async (id, btn) => {
+        try {
+          await api("/api/events/" + id + "/ack", { method: "POST" });
+          btn.outerHTML = '<span class="st">acknowledged</span>';
+        } catch (e) {}
+      };
+
+      let ws = null,
+        pollTimer = null,
+        statusTimer = null,
+        loggingIn = false;
+      function connectWS() {
+        const proto = location.protocol === "https:" ? "wss" : "ws";
+        ws = new WebSocket(
+          proto +
+            "://" +
+            location.host +
+            "/ws/realtime?token=" +
+            encodeURIComponent(token),
+        );
+        ws.onopen = () => {
+          $("#conn").textContent = "live";
+          $("#conn").className = "chip ok";
+          if (pollTimer) {
+            clearInterval(pollTimer);
+            pollTimer = null;
+          }
+        };
+        ws.onmessage = (e) => {
+          const msg = JSON.parse(e.data);
+          if (msg.kind === "alert") pushAlert(msg.event);
+          else if (
+            msg.kind === "event_closed" &&
+            !$("#tab-events").classList.contains("hidden")
+          )
+            loadEvents();
+        };
+        ws.onclose = () => {
+          $("#conn").textContent = "polling";
+          $("#conn").className = "chip warn";
+          if (!pollTimer) pollTimer = setInterval(pollAlerts, 3000);
+        };
+        ws.onerror = () => {
+          try {
+            ws.close();
+          } catch (e) {}
+        };
+      }
+      async function pollAlerts() {
+        try {
+          const rows = await api("/api/events?limit=30");
+          rows.forEach((r) => pushAlert(r, true));
+        } catch (e) {}
+      }
+
+      /* ---------------- events table ---------------- */
+      async function loadEvents() {
+        try {
+          const p = new URLSearchParams();
+          if ($("#fCam").value) p.set("camera_id", $("#fCam").value);
+          if ($("#fType").value) p.set("type", $("#fType").value);
+          if ($("#fQ").value) p.set("q", $("#fQ").value);
+          const rows = await api("/api/events?" + p.toString());
+          $("#evCount").textContent = rows.length + " events";
+          $("#evBody").innerHTML =
+            rows
+              .map((r) => {
+                const t = (r.started_at || "").replace("T", " ").slice(0, 19);
+                return (
+                  "<tr><td>" +
+                  t +
+                  "</td><td>" +
+                  r.camera_name +
+                  "</td>" +
+                  '<td><span class="tag t-' +
+                  r.type +
+                  '">' +
+                  r.type +
+                  "</span></td>" +
+                  "<td>" +
+                  (r.class_name || "") +
+                  "</td>" +
+                  '<td><span class="tag s-' +
+                  r.severity +
+                  '">' +
+                  r.severity +
+                  "</span></td>" +
+                  "<td>" +
+                  (r.confidence ? r.confidence.toFixed(2) : "") +
+                  "</td>" +
+                  "<td>" +
+                  r.status +
+                  "</td><td>" +
+                  (r.zone_name || "—") +
+                  "</td>" +
+                  '<td><a class="lnk" href="/api/events/' +
+                  r.id +
+                  "/snapshot?token=" +
+                  encodeURIComponent(token) +
+                  '" target="_blank">snap</a>' +
+                  '<a class="lnk" href="/api/events/' +
+                  r.id +
+                  "/clip?token=" +
+                  encodeURIComponent(token) +
+                  '" target="_blank">clip</a></td></tr>'
+                );
+              })
+              .join("") ||
+            '<tr><td colspan="9" class="mut">No events yet — wait for a zone breach in the live view.</td></tr>';
+        } catch (e) {}
+      }
+      $("#fGo").onclick = loadEvents;
+
+      /* ---------------- zone editor ---------------- */
+      let zPts = [],
+        zBase = null,
+        zImgX = 0,
+        zImgY = 0,
+        zImgW = 640,
+        zImgH = 360,
+        zSavedZones = [];
+      const zc = $("#zCanvas"),
+        zctx = zc.getContext("2d");
+      async function loadZoneFrame(silent) {
+        const cid = $("#zCam").value;
+        if (!cid) return;
+        try {
+          const r = await fetch(
+            "/api/cameras/" +
+              cid +
+              "/snapshot?clean=1&token=" +
+              encodeURIComponent(token),
+          );
+          if (!r.ok) {
+            // Camera offline — show placeholder so existing zones are still visible
+            zBase = null;
+            zImgX = 0;
+            zImgY = 0;
+            zImgW = 640;
+            zImgH = 360;
+            zc.width = 640;
+            zc.height = 360;
+            zPts = [];
+            drawZ();
+            return;
+          }
+          const blob = await r.blob();
+          const img = new Image();
+          img.onload = () => {
+            const scale = Math.min(640 / img.width, 360 / img.height);
+            zImgW = img.width * scale;
+            zImgH = img.height * scale;
+            zImgX = (640 - zImgW) / 2;
+            zImgY = (360 - zImgH) / 2;
+            zc.width = 640;
+            zc.height = 360;
+            zBase = img;
+            zPts = [];
+            drawZ();
+          };
+          img.src = URL.createObjectURL(blob);
+        } catch (e) {
+          if (!silent) alert("Could not load frame: " + e.message);
+        }
+      }
+      $("#zLoad").onclick = () => loadZoneFrame(false);
+      function zPos(e) {
+        const r = zc.getBoundingClientRect();
+        // raw canvas pixel position
+        const cx = ((e.clientX - r.left) * zc.width) / r.width;
+        const cy = ((e.clientY - r.top) * zc.height) / r.height;
+        return [cx, cy];
+      }
+      function zNorm(p) {
+        // normalise canvas pixel to image-relative [0..1] coordinates
+        return [
+          +((p[0] - zImgX) / zImgW).toFixed(4),
+          +((p[1] - zImgY) / zImgH).toFixed(4),
+        ];
+      }
+      zc.addEventListener("click", (e) => {
+        zPts.push(zPos(e));
+        drawZ();
+      });
+      function drawZ() {
+        zctx.fillStyle = "#0a0f1a";
+        zctx.fillRect(0, 0, 640, 360);
+        if (zBase) {
+          zctx.drawImage(zBase, zImgX, zImgY, zImgW, zImgH);
+        } else {
+          // Offline placeholder grid
+          zctx.strokeStyle = "#1a2640";
+          zctx.lineWidth = 1;
+          for (let x = 0; x <= 640; x += 40) {
+            zctx.beginPath();
+            zctx.moveTo(x, 0);
+            zctx.lineTo(x, 360);
+            zctx.stroke();
+          }
+          for (let y = 0; y <= 360; y += 40) {
+            zctx.beginPath();
+            zctx.moveTo(0, y);
+            zctx.lineTo(640, y);
+            zctx.stroke();
+          }
+          zctx.fillStyle = "#8ea0c0";
+          zctx.font = "13px system-ui";
+          zctx.textAlign = "center";
+          zctx.fillText("Camera offline — zones shown below", 320, 180);
+          zctx.textAlign = "left";
+        }
+        // Draw saved zones
+        const kindColors = {
+          restricted: "239,68,68",
+          perimeter: "34,197,94",
+          area: "56,189,248",
+        };
+        zSavedZones.forEach((z) => {
+          const col = kindColors[z.kind] || "34,197,94";
+          const pts = z.points.map((p) => [
+            zImgX + p[0] * zImgW,
+            zImgY + p[1] * zImgH,
+          ]);
+          if (pts.length < 2) return;
+          zctx.beginPath();
+          pts.forEach((p, i) =>
+            i ? zctx.lineTo(p[0], p[1]) : zctx.moveTo(p[0], p[1]),
+          );
+          zctx.closePath();
+          zctx.fillStyle = "rgba(" + col + ",.12)";
+          zctx.fill();
+          zctx.strokeStyle = "rgba(" + col + ",.8)";
+          zctx.lineWidth = 1.5;
+          zctx.stroke();
+          // Label
+          const cx = pts.reduce((s, p) => s + p[0], 0) / pts.length;
+          const cy = pts.reduce((s, p) => s + p[1], 0) / pts.length;
+          zctx.fillStyle = "rgba(" + col + ",1)";
+          zctx.font = "11px system-ui";
+          zctx.textAlign = "center";
+          zctx.fillText(z.name, cx, cy);
+          zctx.textAlign = "left";
+        });
+        // Draw in-progress sketch
+        if (zPts.length) {
+          zctx.beginPath();
+          zPts.forEach((p, i) =>
+            i ? zctx.lineTo(p[0], p[1]) : zctx.moveTo(p[0], p[1]),
+          );
+          if (zPts.length > 2) zctx.closePath();
+          zctx.fillStyle = "rgba(34,197,94,.15)";
+          zctx.fill();
+          zctx.strokeStyle = "#22c55e";
+          zctx.lineWidth = 2;
+          zctx.stroke();
+          zPts.forEach((p) => {
+            zctx.beginPath();
+            zctx.arc(p[0], p[1], 4, 0, Math.PI * 2);
+            zctx.fillStyle = "#f5a524";
+            zctx.fill();
+          });
+        }
+      }
+      $("#zClear").onclick = () => {
+        zPts = [];
+        drawZ();
+      };
+      $("#zSave").onclick = async () => {
+        if (zPts.length < 3)
+          return alert("Draw at least 3 points on the frame.");
+        const pts = zPts.map((p) => zNorm(p));
+        try {
+          await api("/api/cameras/" + $("#zCam").value + "/zones", {
+            method: "POST",
+            body: JSON.stringify({
+              name: $("#zName").value || "Zone",
+              kind: $("#zKind").value,
+              points: pts,
+            }),
+          });
+          zPts = [];
+          drawZ();
+          loadZoneList();
+        } catch (e) {
+          alert(e.message);
+        }
+      };
+      async function loadZoneList() {
+        const cid = $("#zCam").value;
+        if (!cid) return;
+        try {
+          const zs = await api("/api/zones?camera_id=" + cid);
+          zSavedZones = zs;
+          drawZ();
+          $("#zList").innerHTML =
+            zs
+              .map(
+                (z) =>
+                  "<li>" +
+                  z.name +
+                  ' <span class="mut">(' +
+                  z.kind +
+                  ")</span> " +
+                  '<button class="btn xs" onclick="delZone(' +
+                  z.id +
+                  ')">✕</button></li>',
+              )
+              .join("") || '<li class="mut">No zones for this camera</li>';
+        } catch (e) {}
+      }
+      window.delZone = async (id) => {
+        try {
+          await api("/api/zones/" + id, { method: "DELETE" });
+          loadZoneList();
+        } catch (e) {}
+      };
+
+      /* ---------------- cameras admin ---------------- */
+      async function loadBops() {
+        try {
+          const bs = await api("/api/bops");
+          $("#cBop").innerHTML = bs.length
+            ? bs
+                .map(
+                  (b) =>
+                    '<option value="' +
+                    b.id +
+                    '">' +
+                    b.code +
+                    " · " +
+                    b.name +
+                    "</option>",
+                )
+                .join("")
+            : '<option value="">No BOPs found</option>';
+        } catch (e) {
+          console.error("loadBops error:", e);
+          $("#cBop").innerHTML = '<option value="">Error loading BOPs</option>';
+        }
+      }
+      async function loadCamTable() {
+        try {
+          const cams = await api("/api/cameras");
+          const canDel = me && (me.role === "admin" || me.role === "operator");
+          $("#camBody").innerHTML = cams.length
+            ? cams
+                .map(
+                  (c) =>
+                    "<tr><td>" +
+                    c.id +
+                    "</td><td>" +
+                    c.name +
+                    "</td><td>" +
+                    (c.bop_code || "") +
+                    "</td><td>" +
+                    c.source_type +
+                    "</td><td>" +
+                    c.status +
+                    "</td><td>" +
+                    (canDel
+                      ? '<button class="btn xs" onclick="delCam(' +
+                        c.id +
+                        ')">✕</button>'
+                      : "") +
+                    "</td></tr>",
+                )
+                .join("")
+            : '<tr><td colspan="6" class="mut">No cameras registered</td></tr>';
+        } catch (e) {
+          console.error("loadCamTable error:", e);
+          $("#camBody").innerHTML =
+            '<tr><td colspan="6" class="mut">Error: ' +
+            e.message +
+            "</td></tr>";
+        }
+      }
+      window.delCam = async (id) => {
+        if (!confirm("Deregister this camera?")) return;
+        try {
+          await api("/api/cameras/" + id, { method: "DELETE" });
+          await Promise.all([loadCamTable(), loadCameras()]);
+        } catch (e) {
+          alert(e.message);
+        }
+      };
+      $("#cType").onchange = () => {
+        const t = $("#cType").value;
+        $("#lUrl").classList.toggle("hidden", t !== "rtsp");
+        $("#lPath").classList.toggle("hidden", t !== "video");
+        $("#lScene").classList.toggle("hidden", t !== "synthetic");
+      };
+      $("#cAdd").onclick = async () => {
+        const t = $("#cType").value;
+        const cfg =
+          t === "rtsp"
+            ? { type: t, url: $("#cUrl").value }
+            : t === "video"
+              ? { type: t, path: $("#cPath").value }
+              : { type: t, scene: $("#cScene").value };
+        if (t === "rtsp" && !$("#cUrl").value)
+          return alert("Enter the RTSP URL.");
+        try {
+          await api("/api/cameras", {
+            method: "POST",
+            body: JSON.stringify({
+              bop_id: +$("#cBop").value,
+              name: $("#cName").value || "CAM-new",
+              source_type: t,
+              source_config: cfg,
+            }),
+          });
+          $("#cName").value = $("#cUrl").value = $("#cPath").value = "";
+          await Promise.all([loadCameras(), loadCamTable()]);
+        } catch (e) {
+          alert(e.message);
+        }
+      };
+
+      /* ---------------- admin ---------------- */
+      async function loadUsers() {
+        try {
+          const us = await api("/api/admin/users");
+          $("#uBody").innerHTML = us
+            .map(
+              (u) =>
+                "<tr><td>" +
+                u.username +
+                "</td><td>" +
+                u.role +
+                "</td><td>" +
+                (u.full_name || "") +
+                "</td><td>" +
+                (u.created_at || "").slice(0, 10) +
+                "</td></tr>",
+            )
+            .join("");
+        } catch (e) {}
+      }
+      $("#nuAdd").onclick = async () => {
+        try {
+          await api("/api/admin/users", {
+            method: "POST",
+            body: JSON.stringify({
+              username: $("#nuU").value,
+              password: $("#nuP").value,
+              role: $("#nuR").value,
+              full_name: $("#nuN").value,
+            }),
+          });
+          $("#nuU").value = $("#nuP").value = $("#nuN").value = "";
+          loadUsers();
+          loadAudit();
+        } catch (e) {
+          alert(e.message);
+        }
+      };
+      async function loadAudit() {
+        if (!me || me.role !== "admin") return;
+        try {
+          const rows = await api("/api/admin/audit?limit=50");
+          $("#audBody").innerHTML =
+            rows
+              .map(
+                (a) =>
+                  "<tr><td>" +
+                  (a.at || "").replace("T", " ").slice(0, 19) +
+                  "</td><td>" +
+                  a.user +
+                  "</td><td>" +
+                  a.action +
+                  "</td><td>" +
+                  (a.detail || "") +
+                  "</td></tr>",
+              )
+              .join("") ||
+            '<tr><td colspan="4" class="mut">No entries</td></tr>';
+        } catch (e) {}
+      }
+
+      /* ---------------- reports ---------------- */
+      function rCard(label, value, color) {
+        return (
+          '<div class="cam"><div style="padding:12px 14px">' +
+          '<div class="mut" style="font-size:11px;text-transform:uppercase;letter-spacing:1px">' +
+          label +
+          "</div>" +
+          '<div style="font-size:26px;font-weight:700;color:' +
+          (color || "var(--txt)") +
+          '">' +
+          value +
+          "</div>" +
+          "</div></div>"
+        );
+      }
+      async function loadReports() {
+        try {
+          const r = await api("/api/reports/summary?days=" + $("#rDays").value);
+          const T = r.totals;
+          const resolved = T.total
+            ? Math.round((100 * (T.closed + T.acked)) / T.total)
+            : 0;
+          $("#rCards").innerHTML =
+            rCard("Events", T.total) +
+            rCard(
+              "Active now",
+              T.active,
+              T.active ? "var(--warn)" : "var(--ok)",
+            ) +
+            rCard("Resolved", resolved + "%", "var(--ok)") +
+            rCard(
+              "Avg confidence",
+              T.avg_conf != null ? T.avg_conf.toFixed(2) : "—",
+            ) +
+            rCard(
+              "Avg event duration",
+              r.avg_duration_sec != null ? r.avg_duration_sec + " s" : "—",
+            );
+          $("#rMeta").textContent =
+            T.total +
+            " events in window · avg confidence " +
+            (T.avg_conf != null ? T.avg_conf.toFixed(2) : "—");
+
+          // daily bar chart (inline SVG)
+          const days = r.by_day.slice(-14);
+          const max = Math.max(1, ...days.map((d) => d.n));
+          const W = 560,
+            H = 190,
+            pad = 24,
+            bw = (W - pad * 2) / Math.max(1, days.length);
+          let svg =
+            '<svg viewBox="0 0 ' + W + " " + H + '" style="width:100%">';
+          svg +=
+            '<line x1="' +
+            pad +
+            '" y1="' +
+            (H - 22) +
+            '" x2="' +
+            (W - pad) +
+            '" y2="' +
+            (H - 22) +
+            '" stroke="#22304f" stroke-width="1"/>';
+          days.forEach((d, i) => {
+            const bh = Math.max(2, (d.n / max) * (H - 50));
+            const x = pad + i * bw + 3,
+              y = H - 22 - bh;
+            svg +=
+              '<rect x="' +
+              x +
+              '" y="' +
+              y +
+              '" width="' +
+              (bw - 6) +
+              '" height="' +
+              bh +
+              '" rx="3" fill="#f5a524"><title>' +
+              d.day +
+              ": " +
+              d.n +
+              " events</title></rect>";
+            svg +=
+              '<text x="' +
+              (x + (bw - 6) / 2) +
+              '" y="' +
+              (y - 4) +
+              '" font-size="10" fill="#8ea0c0" text-anchor="middle">' +
+              d.n +
+              "</text>";
+            svg +=
+              '<text x="' +
+              (x + (bw - 6) / 2) +
+              '" y="' +
+              (H - 8) +
+              '" font-size="8.5" fill="#8ea0c0" text-anchor="middle">' +
+              d.day.slice(5) +
+              "</text>";
+          });
+          svg += "</svg>";
+          $("#rChart").innerHTML = days.length
+            ? svg
+            : '<p class="mut">No events in this window yet.</p>';
+
+          // type / severity mix
+          const mix = (arr, prefix) =>
+            arr
+              .map(
+                (x) =>
+                  '<div style="display:flex;align-items:center;gap:8px;margin:6px 0">' +
+                    '<span class="tag ' +
+                    prefix +
+                    x.type ||
+                  x.severity +
+                    '" style="min-width:86px;text-align:center">' +
+                    (x.type || x.severity) +
+                    "</span>" +
+                    '<div style="flex:1;background:var(--panel2);border-radius:6px;height:10px">' +
+                    '<div style="width:' +
+                    Math.min(100, (x.n / T.total) * 100) +
+                    "%;height:100%;border-radius:6px;" +
+                    "background:" +
+                    (x.severity === "high" || x.type === "intrusion"
+                      ? "var(--bad)"
+                      : "var(--warn)") +
+                    '"></div></div>' +
+                    '<span class="mut" style="min-width:26px;text-align:right">' +
+                    x.n +
+                    "</span></div>",
+              )
+              .join("");
+          $("#rMix").innerHTML =
+            mix(r.by_type, "t-") + mix(r.by_severity, "s-") ||
+            '<p class="mut">—</p>';
+
+          // per camera
+          $("#rCamBody").innerHTML =
+            r.by_camera
+              .map(
+                (c) => "<tr><td>" + c.camera + "</td><td>" + c.n + "</td></tr>",
+              )
+              .join("") || '<tr><td colspan="2" class="mut">—</td></tr>';
+        } catch (e) {}
+      }
+      $("#rGo").onclick = loadReports;
+
+      /* ---------------- map ---------------- */
+      let mapSelected = 0;
+      async function loadMap() {
+        try {
+          const [bops, cams] = await Promise.all([
+            api("/api/bops"),
+            api("/api/cameras"),
+          ]);
+          const W = 900,
+            H = 520,
+            P = 70;
+          const lats = bops.map((b) => b.lat).filter((v) => v != null);
+          const lngs = bops.map((b) => b.lng).filter((v) => v != null);
+          let svg =
+            '<svg viewBox="0 0 ' +
+            W +
+            " " +
+            H +
+            '" style="width:100%;background:#0a0f1a;border-radius:8px">';
+          // grid
+          for (let gx = 0; gx <= 8; gx++) {
+            svg +=
+              '<line x1="' +
+              (P + (gx * (W - 2 * P)) / 8) +
+              '" y1="' +
+              P / 2 +
+              '" x2="' +
+              (P + (gx * (W - 2 * P)) / 8) +
+              '" y2="' +
+              (H - P / 2) +
+              '" stroke="#16233f" stroke-width="1"/>';
+          }
+          for (let gy = 0; gy <= 5; gy++) {
+            svg +=
+              '<line x1="' +
+              P / 2 +
+              '" y1="' +
+              (P + (gy * (H - 2 * P)) / 5) +
+              '" x2="' +
+              (W - P / 2) +
+              '" y2="' +
+              (P + (gy * (H - 2 * P)) / 5) +
+              '" stroke="#16233f" stroke-width="1"/>';
+          }
+          svg +=
+            '<text x="' +
+            W / 2 +
+            '" y="30" font-size="12" fill="#8ea0c0" text-anchor="middle">IBVAP coverage — schematic (schematic, not to scale)</text>';
+          if (lats.length && lngs.length) {
+            const la0 = Math.min(...lats),
+              la1 = Math.max(...lats);
+            const lo0 = Math.min(...lngs),
+              lo1 = Math.max(...lngs);
+            const px = (lng) =>
+              P + ((lng - lo0) / Math.max(1e-9, lo1 - lo0)) * (W - 2 * P);
+            const py = (lat) =>
+              H - P - ((lat - la0) / Math.max(1e-9, la1 - la0)) * (H - 2 * P);
+            bops.forEach((b, bi) => {
+              if (b.lat == null || b.lng == null) return;
+              const x = px(b.lng),
+                y = py(b.lat);
+              const bcams = cams.filter((c) => c.bop_id === b.id);
+              const allOn =
+                bcams.length && bcams.every((c) => c.status === "online");
+              const hot = mapSelected === b.id;
+              svg +=
+                '<g style="cursor:pointer" onclick="selBop(' + b.id + ')">';
+              svg +=
+                '<circle cx="' +
+                x +
+                '" cy="' +
+                y +
+                '" r="' +
+                (hot ? 14 : 10) +
+                '" fill="' +
+                (allOn ? "#14532d" : "#7f1d1d") +
+                '" stroke="' +
+                (hot ? "#f5a524" : allOn ? "#22c55e" : "#ef4444") +
+                '" stroke-width="2"/>';
+              bcams.forEach((c, ci) => {
+                const a = (ci / Math.max(1, bcams.length)) * Math.PI * 2;
+                const cx = x + Math.cos(a) * 22,
+                  cy = y + Math.sin(a) * 22;
+                svg +=
+                  '<circle cx="' +
+                  cx +
+                  '" cy="' +
+                  cy +
+                  '" r="4" fill="' +
+                  (c.status === "online" ? "#22c55e" : "#ef4444") +
+                  '"><title>' +
+                  c.name +
+                  " · " +
+                  c.status +
+                  "</title></circle>";
+              });
+              svg +=
+                '<text x="' +
+                x +
+                '" y="' +
+                (y - 30) +
+                '" font-size="12" font-weight="700" fill="' +
+                (hot ? "#f5a524" : "#dce5f7") +
+                '" text-anchor="middle">' +
+                b.code +
+                "</text>";
+              svg +=
+                '<text x="' +
+                x +
+                '" y="' +
+                (y + 42) +
+                '" font-size="10" fill="#8ea0c0" text-anchor="middle">' +
+                bcams.length +
+                " cams · " +
+                (allOn ? "online" : "issues") +
+                "</text>";
+              svg += "</g>";
+            });
+          }
+          svg +=
+            '<g font-size="11" fill="#8ea0c0"><circle cx="' +
+            (W - 150) +
+            '" cy="' +
+            (H - 28) +
+            '" r="5" fill="#22c55e"/><text x="' +
+            (W - 140) +
+            '" y="' +
+            (H - 24) +
+            '">camera online</text>' +
+            '<circle cx="' +
+            (W - 60) +
+            '" cy="' +
+            (H - 28) +
+            '" r="5" fill="#ef4444"/><text x="' +
+            (W - 50) +
+            '" y="' +
+            (H - 24) +
+            '">offline</text></g></svg>';
+          $("#mapSvg").innerHTML = svg;
+          renderMapList(bops, cams);
+        } catch (e) {}
+      }
+      function renderMapList(bops, cams) {
+        const sel = mapSelected
+          ? bops.filter((b) => b.id === mapSelected)
+          : bops;
+        $("#mapList").innerHTML =
+          sel
+            .map((b) => {
+              const bcams = cams.filter((c) => c.bop_id === b.id);
+              return (
+                '<div style="border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:8px">' +
+                "<b>" +
+                b.code +
+                '</b> <span class="mut">' +
+                b.name +
+                "</span>" +
+                bcams
+                  .map(
+                    (c) =>
+                      '<div style="font-size:12px;margin-top:4px"><span class="dot ' +
+                      (c.status === "online" ? "on" : "off") +
+                      '" style="display:inline-block;margin-right:6px"></span>' +
+                      c.name +
+                      "</div>",
+                  )
+                  .join("") +
+                "</div>"
+              );
+            })
+            .join("") || '<span class="mut">—</span>';
+      }
+      window.selBop = (id) => {
+        mapSelected = mapSelected === id ? 0 : id;
+        loadMap();
+      };
+
+      /* ---------------- boot ---------------- */
+      async function boot() {
+        try {
+          me = (await api("/api/auth/me")).user;
+        } catch (e) {
+          showLogin();
+          return;
+        }
+        $("#who").textContent = me.username + " · " + me.role;
+        $("#adminTab").style.display = me.role === "admin" ? "" : "none";
+        $("#camTab").style.display =
+          me.role === "admin" || me.role === "operator" ? "" : "none";
+        alertN = 0;
+        seen.clear();
+        $("#alertcount").textContent = "0";
+        $("#alerts").innerHTML = "";
+        await loadCameras();
+        connectWS();
+        pollStatus();
+        if (statusTimer) clearInterval(statusTimer);
+        statusTimer = setInterval(pollStatus, 5000);
+      }
+      if (token) boot();
+      else showLogin();
+    </script>
+  </body>
+</html>

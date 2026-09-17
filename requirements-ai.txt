@@ -1,0 +1,6 @@
+# Optional heavy AI stack (production-grade detector).
+# The reference build runs without this: detector "ssd" (cv2.dnn) or "sim" is used.
+-r requirements.txt
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch>=2.2
+ultralytics>=8.1

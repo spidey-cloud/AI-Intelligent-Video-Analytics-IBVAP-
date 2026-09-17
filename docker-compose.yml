@@ -1,0 +1,26 @@
+# IBVAP production reference deployment.
+# Phase 1 (pilot): single server. Phase 3 (scale): duplicate the service on a
+# second host with a load balancer + shared object storage (ARCHITECTURE.md §12).
+services:
+  ibvap:
+    build: .
+    image: ibvap:0.1.0
+    ports:
+      - "8000:8000"
+    environment:
+      IBVAP_SECRET: ${IBVAP_SECRET:-change-me-in-production}
+      IBVAP_DETECTOR: auto          # auto | ssd | yolo | sim
+      IBVAP_CONF: "0.4"
+      IBVAP_FRAME_WIDTH: "640"
+      IBVAP_CLIP_SECONDS: "20"
+      IBVAP_LOITER_SECONDS: "15"
+      IBVAP_INTRUSION_COOLDOWN: "25"
+    volumes:
+      - ibvap-data:/data
+      - ./models:/app/models:ro
+    restart: unless-stopped
+    # Production: replace SQLite with PostgreSQL (ARCHITECTURE.md §7)
+    # and terminate TLS at the SSB reverse proxy (nginx) with MFA.
+
+volumes:
+  ibvap-data:

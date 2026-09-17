@@ -1,0 +1,8 @@
+# IBVAP core (CPU-only, zero licensing – proposal §5.3)
+fastapi>=0.110
+uvicorn[standard]>=0.29
+opencv-python-headless>=4.9
+numpy>=1.26
+PyJWT>=2.8
+python-multipart>=0.0.9
+pillow>=10

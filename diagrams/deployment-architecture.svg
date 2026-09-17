@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="780" viewBox="0 0 1240 780" font-family="Segoe UI, system-ui, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect width="1240" height="780" fill="#f8fafc"/>
+  <text x="40" y="36" font-size="18" font-weight="700" fill="#0f172a">IBVAP — Deployment Architecture</text>
+  <text x="40" y="58" font-size="12" fill="#64748b">Zero new BOP hardware — reuses existing cameras, VPN, servers and storage</text>
+
+  <!-- LEFT: existing SSB infrastructure -->
+  <rect x="40" y="84" width="380" height="560" rx="12" fill="#eff6ff" stroke="#0284c7" stroke-dasharray="7 4"/>
+  <text x="60" y="110" font-size="12" font-weight="700" fill="#0369a1">EXISTING SSB INFRASTRUCTURE — NO CHANGES</text>
+
+  <g>
+    <rect x="64" y="126" width="332" height="146" rx="10" fill="#e0f2fe" stroke="#0284c7"/>
+    <text x="80" y="150" font-size="13" font-weight="700" fill="#0f172a">BOP-01 · Border Out Post</text>
+    <text x="80" y="176" font-size="12" fill="#334155">• 4–8 IP CCTV cameras (RTSP, H.264)</text>
+    <text x="80" y="198" font-size="12" fill="#334155">• existing NVR (24/7 recording)</text>
+    <text x="80" y="220" font-size="12" fill="#334155">• router → SSB VPN</text>
+    <text x="80" y="252" font-size="11" fill="#64748b">cameras unchanged · no new devices</text>
+  </g>
+  <g>
+    <rect x="64" y="292" width="332" height="146" rx="10" fill="#e0f2fe" stroke="#0284c7"/>
+    <text x="80" y="316" font-size="13" font-weight="700" fill="#0f172a">BOP-02 · Check Post</text>
+    <text x="80" y="342" font-size="12" fill="#334155">• 4–8 IP CCTV cameras (RTSP, H.264)</text>
+    <text x="80" y="364" font-size="12" fill="#334155">• existing NVR (24/7 recording)</text>
+    <text x="80" y="386" font-size="12" fill="#334155">• router → SSB VPN</text>
+    <text x="80" y="418" font-size="11" fill="#64748b">cameras unchanged · no new devices</text>
+  </g>
+  <g>
+    <rect x="64" y="458" width="332" height="146" rx="10" fill="#e0f2fe" stroke="#0284c7"/>
+    <text x="80" y="482" font-size="13" font-weight="700" fill="#0f172a">BOP-03 · Border Road</text>
+    <text x="80" y="508" font-size="12" fill="#334155">• 4–8 IP CCTV cameras (RTSP, H.264)</text>
+    <text x="80" y="530" font-size="12" fill="#334155">• existing NVR (24/7 recording)</text>
+    <text x="80" y="552" font-size="12" fill="#334155">• router → SSB VPN</text>
+    <text x="80" y="584" font-size="11" fill="#64748b">cameras unchanged · no new devices</text>
+  </g>
+  <text x="230" y="636" font-size="13" fill="#64748b" text-anchor="middle">… every other BOP (same pattern)</text>
+
+  <!-- fan-in from BOPs -->
+  <line x1="396" y1="199" x2="432" y2="199" stroke="#475569"/>
+  <line x1="396" y1="365" x2="432" y2="365" stroke="#475569"/>
+  <line x1="396" y1="531" x2="432" y2="531" stroke="#475569"/>
+  <line x1="432" y1="199" x2="432" y2="531" stroke="#475569"/>
+
+  <!-- CENTER: VPN band -->
+  <rect x="450" y="84" width="180" height="560" rx="12" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text transform="translate(540,364) rotate(-90)" text-anchor="middle" font-size="13" font-weight="700" fill="#475569">SSB VPN / WAN (existing, encrypted)</text>
+
+  <!-- main RTSP arrow through VPN -->
+  <line x1="432" y1="365" x2="662" y2="365" stroke="#475569" marker-end="url(#arr)"/>
+  <text x="547" y="352" font-size="11" fill="#334155" text-anchor="middle">RTSP streams · 640×360 · 3–5 fps ·</text>
+  <text x="547" y="384" font-size="11" fill="#334155" text-anchor="middle">motion-triggered · adaptive bitrate</text>
+
+  <!-- RIGHT: central data centre -->
+  <rect x="670" y="84" width="530" height="560" rx="12" fill="#ecfdf5" stroke="#16a34a"/>
+  <text x="690" y="110" font-size="12" font-weight="700" fill="#15803d">CENTRAL DATA CENTRE — one existing SSB server (+1 for HA)</text>
+
+  <g>
+    <rect x="690" y="126" width="244" height="74" rx="10" fill="#ffffff" stroke="#334155"/>
+    <text x="704" y="152" font-size="13" font-weight="700" fill="#0f172a">Ingestion Service</text>
+    <text x="704" y="172" font-size="11" fill="#64748b">RTSP pool · auto-reconnect · sampler</text>
+    <rect x="946" y="126" width="244" height="74" rx="10" fill="#ffffff" stroke="#334155"/>
+    <text x="960" y="152" font-size="13" font-weight="700" fill="#0f172a">AI Analytics Workers</text>
+    <text x="960" y="172" font-size="11" fill="#64748b">CPU (INT8) · 3–5 fps per camera</text>
+    <rect x="690" y="216" width="244" height="74" rx="10" fill="#ffffff" stroke="#334155"/>
+    <text x="704" y="242" font-size="13" font-weight="700" fill="#0f172a">Event &amp; Alert Engine</text>
+    <text x="704" y="262" font-size="11" fill="#64748b">rules · dedup · ring-clip recorder</text>
+    <rect x="946" y="216" width="244" height="74" rx="10" fill="#ffffff" stroke="#334155"/>
+    <text x="960" y="242" font-size="13" font-weight="700" fill="#0f172a">PostgreSQL</text>
+    <text x="960" y="262" font-size="11" fill="#64748b">events · zones · users · audit</text>
+    <rect x="690" y="306" width="244" height="74" rx="10" fill="#ffffff" stroke="#334155"/>
+    <text x="704" y="332" font-size="13" font-weight="700" fill="#0f172a">API Gateway</text>
+    <text x="704" y="352" font-size="11" fill="#64748b">REST + WebSocket + MJPEG live view</text>
+    <rect x="946" y="306" width="244" height="74" rx="10" fill="#ffffff" stroke="#334155"/>
+    <text x="960" y="332" font-size="13" font-weight="700" fill="#0f172a">Object Storage</text>
+    <text x="960" y="352" font-size="11" fill="#64748b">clips &amp; snapshots (existing NAS/SAN)</text>
+  </g>
+
+  <rect x="690" y="402" width="500" height="74" rx="10" fill="#ffffff" stroke="#334155"/>
+  <text x="704" y="428" font-size="12" font-weight="700" fill="#0f172a">Server (existing): 16–32 cores · 64 GB+ RAM · 5–10 TB · 100 Mbps–1 Gbps</text>
+  <text x="704" y="450" font-size="11" fill="#64748b">Docker: one-command deploy · rolling updates · healthchecks · no GPU</text>
+
+  <rect x="690" y="492" width="500" height="44" rx="10" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="940" y="518" font-size="11" fill="#475569" text-anchor="middle">Nightly DB backup · clip retention 30–90 days · lease-based failover (2nd server, optional)</text>
+
+  <!-- manifold to clients -->
+  <line x1="840" y1="644" x2="840" y2="664" stroke="#475569"/>
+  <line x1="310" y1="664" x2="1030" y2="664" stroke="#475569"/>
+  <line x1="310" y1="664" x2="310" y2="680" stroke="#475569" marker-end="url(#arr)"/>
+  <line x1="670" y1="664" x2="670" y2="680" stroke="#475569" marker-end="url(#arr)"/>
+  <line x1="1030" y1="664" x2="1030" y2="680" stroke="#475569" marker-end="url(#arr)"/>
+  <text x="840" y="658" font-size="11" fill="#334155" text-anchor="middle">HTTPS / WSS over VPN (TLS)</text>
+
+  <!-- clients -->
+  <g>
+    <rect x="140" y="684" width="340" height="72" rx="10" fill="#fce7f3" stroke="#db2777"/>
+    <text x="310" y="710" font-size="12.5" font-weight="700" fill="#0f172a" text-anchor="middle">BOP staff — web browser</text>
+    <text x="310" y="730" font-size="11" fill="#64748b" text-anchor="middle">dashboard · live wall · zone editor</text>
+    <rect x="500" y="684" width="340" height="72" rx="10" fill="#fce7f3" stroke="#db2777"/>
+    <text x="670" y="710" font-size="12.5" font-weight="700" fill="#0f172a" text-anchor="middle">Mobile — tablet / phone</text>
+    <text x="670" y="730" font-size="11" fill="#64748b" text-anchor="middle">live alerts · ACK · live view (WS / SMS)</text>
+    <rect x="860" y="684" width="340" height="72" rx="10" fill="#fce7f3" stroke="#db2777"/>
+    <text x="1030" y="710" font-size="12.5" font-weight="700" fill="#0f172a" text-anchor="middle">Command Centre — C2 systems</text>
+    <text x="1030" y="730" font-size="11" fill="#64748b" text-anchor="middle">REST API + signed webhooks</text>
+  </g>
+</svg>

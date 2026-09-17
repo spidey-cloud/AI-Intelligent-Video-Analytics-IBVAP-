@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="650" viewBox="0 0 1240 650" font-family="Segoe UI, system-ui, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect width="1240" height="650" fill="#f8fafc"/>
+  <text x="40" y="36" font-size="18" font-weight="700" fill="#0f172a">IBVAP — Frame Analytics Pipeline (per camera)</text>
+  <text x="40" y="58" font-size="12" fill="#64748b">Motion-gated, sampled, event-centric — CPU budget fits 150–250 cameras on one 32-core node</text>
+
+  <!-- row 1 -->
+  <g>
+    <rect x="50" y="150" width="140" height="80" rx="10" fill="#e0f2fe" stroke="#0284c7"/>
+    <text x="120" y="184" font-size="12.5" font-weight="700" fill="#0f172a" text-anchor="middle">Camera frame</text>
+    <text x="120" y="204" font-size="10.5" fill="#64748b" text-anchor="middle">H.264 over VPN</text>
+
+    <rect x="220" y="150" width="160" height="80" rx="10" fill="#e0f2fe" stroke="#0284c7"/>
+    <text x="300" y="184" font-size="12.5" font-weight="700" fill="#0f172a" text-anchor="middle">Decode + resize</text>
+    <text x="300" y="204" font-size="10.5" fill="#64748b" text-anchor="middle">640 px max edge</text>
+
+    <rect x="410" y="150" width="170" height="80" rx="10" fill="#e0f2fe" stroke="#0284c7"/>
+    <text x="495" y="184" font-size="12.5" font-weight="700" fill="#0f172a" text-anchor="middle">Motion gate</text>
+    <text x="495" y="204" font-size="10.5" fill="#64748b" text-anchor="middle">|Δgray| vs prev frame</text>
+
+    <polygon points="680,190 750,150 820,190 750,230" fill="#ffffff" stroke="#334155" stroke-width="1.5"/>
+    <text x="750" y="195" font-size="12.5" font-weight="700" fill="#0f172a" text-anchor="middle">motion?</text>
+
+    <rect x="850" y="150" width="170" height="80" rx="10" fill="#ede9fe" stroke="#7c3aed"/>
+    <text x="935" y="184" font-size="12.5" font-weight="700" fill="#0f172a" text-anchor="middle">Detector</text>
+    <text x="935" y="204" font-size="10.5" fill="#64748b" text-anchor="middle">YOLO-n INT8 · 3–5 fps</text>
+
+    <rect x="1050" y="150" width="150" height="80" rx="10" fill="#ede9fe" stroke="#7c3aed"/>
+    <text x="1125" y="184" font-size="12.5" font-weight="700" fill="#0f172a" text-anchor="middle">Tracker</text>
+    <text x="1125" y="204" font-size="10.5" fill="#64748b" text-anchor="middle">IoU + expiry</text>
+  </g>
+
+  <line x1="190" y1="190" x2="214" y2="190" stroke="#475569" marker-end="url(#arr)"/>
+  <line x1="380" y1="190" x2="404" y2="190" stroke="#475569" marker-end="url(#arr)"/>
+  <line x1="580" y1="190" x2="674" y2="190" stroke="#475569" marker-end="url(#arr)"/>
+  <line x1="820" y1="190" x2="844" y2="190" stroke="#475569" marker-end="url(#arr)"/>
+  <text x="832" y="180" font-size="11" fill="#15803d" font-weight="700">yes</text>
+  <line x1="1020" y1="190" x2="1044" y2="190" stroke="#475569" marker-end="url(#arr)"/>
+
+  <!-- no-motion branch -->
+  <line x1="750" y1="230" x2="750" y2="296" stroke="#475569" marker-end="url(#arr)"/>
+  <text x="762" y="262" font-size="11" fill="#b91c1c" font-weight="700">no</text>
+  <rect x="640" y="300" width="220" height="64" rx="10" fill="#f1f5f9" stroke="#94a3b8" stroke-dasharray="5 3"/>
+  <text x="750" y="328" font-size="12.5" font-weight="700" fill="#334155" text-anchor="middle">Skip analytics</text>
+  <text x="750" y="348" font-size="10.5" fill="#64748b" text-anchor="middle">saves 60–80% compute</text>
+
+  <!-- tracker → rules (row 2) -->
+  <line x1="1125" y1="230" x2="1125" y2="330" x2="1125" y2="330" stroke="#475569"/>
+  <line x1="1125" y1="330" x2="966" y2="330" stroke="#475569" marker-end="url(#arr)"/>
+  <rect x="760" y="290" width="200" height="80" rx="10" fill="#ede9fe" stroke="#7c3aed"/>
+  <text x="860" y="324" font-size="12.5" font-weight="700" fill="#0f172a" text-anchor="middle">Per-track rules</text>
+  <text x="860" y="344" font-size="10.5" fill="#64748b" text-anchor="middle">zone intrusion · dwell &gt; T</text>
+  <text x="860" y="358" font-size="10.5" fill="#64748b" text-anchor="middle">abandoned · crossing</text>
+
+  <polygon points="1010,330 1070,290 1130,330 1070,370" fill="#ffffff" stroke="#334155" stroke-width="1.5" transform="translate(-130,0)"/>
+  <text x="940" y="335" font-size="12.5" font-weight="700" fill="#0f172a" text-anchor="middle">new event?</text>
+
+  <line x1="950" y1="370" x2="950" y2="446" stroke="#475569" marker-end="url(#arr)"/>
+  <text x="962" y="404" font-size="11" fill="#15803d" font-weight="700">yes</text>
+  <line x1="1010" y1="330" x2="1136" y2="330" stroke="#475569" marker-end="url(#arr)"/>
+  <text x="1060" y="320" font-size="11" fill="#b91c1c" font-weight="700">no</text>
+  <rect x="1140" y="296" width="90" height="68" rx="10" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="1185" y="328" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">discard</text>
+  <text x="1185" y="346" font-size="10" fill="#64748b" text-anchor="middle">(annotate only)</text>
+
+  <!-- event path -->
+  <g>
+    <rect x="840" y="450" width="220" height="80" rx="10" fill="#fef3c7" stroke="#d97706"/>
+    <text x="950" y="484" font-size="12.5" font-weight="700" fill="#0f172a" text-anchor="middle">Alert Router</text>
+    <text x="950" y="504" font-size="10.5" fill="#64748b" text-anchor="middle">fan-out · per-channel queues</text>
+
+    <rect x="560" y="450" width="220" height="80" rx="10" fill="#fef3c7" stroke="#d97706"/>
+    <text x="670" y="484" font-size="12.5" font-weight="700" fill="#0f172a" text-anchor="middle">Event DB write</text>
+    <text x="670" y="504" font-size="10.5" fill="#64748b" text-anchor="middle">active · audited</text>
+
+    <rect x="280" y="450" width="220" height="80" rx="10" fill="#fef3c7" stroke="#d97706"/>
+    <text x="390" y="484" font-size="12.5" font-weight="700" fill="#0f172a" text-anchor="middle">Snapshot + clip start</text>
+    <text x="390" y="504" font-size="10.5" fill="#64748b" text-anchor="middle">evidence captured instantly</text>
+  </g>
+  <line x1="950" y1="450" x2="806" y2="490" stroke="#475569" marker-end="url(#arr)"/>
+  <line x1="840" y1="490" x2="786" y2="490" stroke="#475569" marker-end="url(#arr)"/>
+  <line x1="560" y1="490" x2="506" y2="490" stroke="#475569" marker-end="url(#arr)"/>
+
+  <!-- channels -->
+  <g>
+    <rect x="850" y="576" width="130" height="54" rx="8" fill="#dcfce7" stroke="#16a34a"/>
+    <text x="915" y="600" font-size="11.5" font-weight="700" fill="#14532d" text-anchor="middle">WS → dashboards</text>
+    <text x="915" y="617" font-size="10" fill="#166534" text-anchor="middle">toast + sound + focus</text>
+    <rect x="996" y="576" width="130" height="54" rx="8" fill="#dcfce7" stroke="#16a34a"/>
+    <text x="1061" y="600" font-size="11.5" font-weight="700" fill="#14532d" text-anchor="middle">SMS gateway</text>
+    <text x="1061" y="617" font-size="10" fill="#166534" text-anchor="middle">operator mobiles</text>
+    <rect x="1142" y="576" width="98" height="54" rx="8" fill="#dcfce7" stroke="#16a34a"/>
+    <text x="1191" y="600" font-size="11.5" font-weight="700" fill="#14532d" text-anchor="middle">C2 webhook</text>
+    <text x="1191" y="617" font-size="10" fill="#166534" text-anchor="middle">command ctr</text>
+  </g>
+  <line x1="950" y1="530" x2="915" y2="572" stroke="#475569" marker-end="url(#arr)"/>
+  <line x1="960" y1="530" x2="1061" y2="572" stroke="#475569" marker-end="url(#arr)"/>
+  <line x1="970" y1="530" x2="1191" y2="572" stroke="#475569" marker-end="url(#arr)"/>
+
+  <!-- latency strip -->
+  <rect x="50" y="580" width="780" height="50" rx="10" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="440" y="602" font-size="11.5" font-weight="700" fill="#334155" text-anchor="middle">Latency budget (frame → operator): decode 20 ms · motion 1 ms · detect ≤ 250 ms · rules 5 ms · DB + WS 100 ms · VPN ≤ 1 s</text>
+  <text x="440" y="620" font-size="11.5" font-weight="700" fill="#15803d" text-anchor="middle">end-to-end &lt; 3 s (typical 1–2 s)</text>
+</svg>

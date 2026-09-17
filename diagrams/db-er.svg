@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="780" viewBox="0 0 1240 780" font-family="Segoe UI, system-ui, sans-serif">
+  <rect width="1240" height="780" fill="#f8fafc"/>
+  <text x="40" y="36" font-size="18" font-weight="700" fill="#0f172a">IBVAP — Data Model</text>
+  <text x="40" y="58" font-size="12" fill="#64748b">PostgreSQL in production; identical schema in the SQLite reference build. Events are the root object — media lives in object storage, referenced by path.</text>
+
+  <g font-size="11.5" fill="#334155">
+    <!-- users -->
+    <rect x="60" y="100" width="250" height="28" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="72" y="119" font-size="13" font-weight="700" fill="#0f172a">users</text>
+    <rect x="60" y="128" width="250" height="133" fill="#ffffff" stroke="#2563eb"/>
+    <text x="72" y="146">id (PK)</text>
+    <text x="72" y="165">username (UQ)</text>
+    <text x="72" y="184">password_hash (PBKDF2)</text>
+    <text x="72" y="203">role · admin|operator|viewer</text>
+    <text x="72" y="222">full_name</text>
+    <text x="72" y="241">active</text>
+    <text x="72" y="260">created_at</text>
+
+    <!-- bops -->
+    <rect x="60" y="330" width="250" height="28" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="72" y="349" font-size="13" font-weight="700" fill="#0f172a">bops</text>
+    <rect x="60" y="358" width="250" height="95" fill="#ffffff" stroke="#2563eb"/>
+    <text x="72" y="376">id (PK)</text>
+    <text x="72" y="395">code (UQ) · name</text>
+    <text x="72" y="414">lat / lng</text>
+    <text x="72" y="433">active</text>
+    <text x="72" y="452" fill="#64748b">multi-tenancy root</text>
+
+    <!-- cameras -->
+    <rect x="420" y="100" width="270" height="28" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="432" y="119" font-size="13" font-weight="700" fill="#0f172a">cameras</text>
+    <rect x="420" y="128" width="270" height="133" fill="#ffffff" stroke="#2563eb"/>
+    <text x="432" y="146">id (PK)</text>
+    <text x="432" y="165">bop_id (FK → bops)</text>
+    <text x="432" y="184">name</text>
+    <text x="432" y="203">source_type · rtsp|video|synthetic</text>
+    <text x="432" y="222">source_config (JSONB) · RTSP URL…</text>
+    <text x="432" y="241">status · pending|online|offline</text>
+    <text x="432" y="260">created_at</text>
+
+    <!-- zones -->
+    <rect x="420" y="330" width="270" height="28" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="432" y="349" font-size="13" font-weight="700" fill="#0f172a">zones</text>
+    <rect x="420" y="358" width="270" height="114" fill="#ffffff" stroke="#2563eb"/>
+    <text x="432" y="376">id (PK)</text>
+    <text x="432" y="395">camera_id (FK → cameras)</text>
+    <text x="432" y="414">name</text>
+    <text x="432" y="433">kind · perimeter|restricted|area</text>
+    <text x="432" y="452">points (JSONB · normalised 0..1)</text>
+    <text x="432" y="471">active</text>
+
+    <!-- events -->
+    <rect x="800" y="100" width="330" height="28" rx="6" fill="#fef3c7" stroke="#d97706"/>
+    <text x="812" y="119" font-size="13" font-weight="700" fill="#0f172a">events</text>
+    <rect x="800" y="128" width="330" height="234" fill="#ffffff" stroke="#d97706"/>
+    <text x="812" y="146">id (PK)</text>
+    <text x="812" y="164">camera_id (FK → cameras)</text>
+    <text x="812" y="182">zone_id (FK → zones)</text>
+    <text x="812" y="200">track_id · class_name</text>
+    <text x="812" y="218">type · intrusion|loitering|plate|face…</text>
+    <text x="812" y="236">severity · low|medium|high</text>
+    <text x="812" y="254">status · active|acknowledged|closed</text>
+    <text x="812" y="272">confidence</text>
+    <text x="812" y="290">started_at · ended_at</text>
+    <text x="812" y="308">snapshot · clip (object-store paths)</text>
+    <text x="812" y="326">meta (JSONB) · plate, face, rule data</text>
+    <text x="812" y="344">created_at</text>
+    <text x="812" y="358" font-size="10.5" fill="#64748b">IDX (started_at) · IDX (camera_id, started_at)</text>
+
+    <!-- alerts -->
+    <rect x="800" y="420" width="330" height="28" rx="6" fill="#dcfce7" stroke="#16a34a"/>
+    <text x="812" y="439" font-size="13" font-weight="700" fill="#0f172a">alerts</text>
+    <rect x="800" y="448" width="330" height="95" fill="#ffffff" stroke="#16a34a"/>
+    <text x="812" y="466">id (PK)</text>
+    <text x="812" y="485">event_id (FK → events)</text>
+    <text x="812" y="504">channel · ws|sms|webhook</text>
+    <text x="812" y="523">payload · sent_at</text>
+
+    <!-- audit -->
+    <rect x="800" y="590" width="330" height="28" rx="6" fill="#f1f5f9" stroke="#64748b"/>
+    <text x="812" y="609" font-size="13" font-weight="700" fill="#0f172a">audit</text>
+    <rect x="800" y="618" width="330" height="95" fill="#ffffff" stroke="#64748b"/>
+    <text x="812" y="636">id (PK)</text>
+    <text x="812" y="655">user_id (FK → users)</text>
+    <text x="812" y="674">action · detail</text>
+    <text x="812" y="693">at (tamper-evident log)</text>
+  </g>
+
+  <!-- relationships -->
+  <g stroke="#475569" fill="none" stroke-width="1.5">
+    <!-- bops 1-N cameras -->
+    <path d="M 310 380 L 365 380 L 365 180 L 414 180"/>
+    <!-- cameras 1-N zones -->
+    <line x1="555" y1="261" x2="555" y2="324"/>
+    <!-- cameras 1-N events -->
+    <line x1="690" y1="160" x2="794" y2="160"/>
+    <!-- zones 1-N events -->
+    <path d="M 690 380 L 745 380 L 745 300 L 794 300"/>
+    <!-- events 1-N alerts -->
+    <line x1="955" y1="362" x2="955" y2="414"/>
+  </g>
+  <g font-size="11" font-weight="700" fill="#475569">
+    <text x="322" y="372">1</text><text x="398" y="172">N</text>
+    <text x="562" y="280">1</text><text x="562" y="318">N</text>
+    <text x="710" y="152">1</text><text x="772" y="152">N</text>
+    <text x="700" y="372">1</text><text x="772" y="292">N</text>
+    <text x="962" y="382">1</text><text x="962" y="410">N</text>
+  </g>
+
+  <text x="60" y="750" font-size="11" fill="#64748b">PK primary key · FK foreign key · JSONB structured config (zones store normalised polygon points — resolution independent) · media paths reference the Object Store (§7.2)</text>
+</svg>

@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="700" viewBox="0 0 1240 700" font-family="Segoe UI, system-ui, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#334155"/>
+    </marker>
+    <marker id="arrD" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect width="1240" height="700" fill="#f8fafc"/>
+  <text x="40" y="36" font-size="18" font-weight="700" fill="#0f172a">IBVAP — Event Sequence: fence intrusion → operator alert</text>
+  <text x="40" y="58" font-size="12" fill="#64748b">End-to-end &lt; 3 s · snapshot captured before any alert is dispatched · ACK and close are audited</text>
+
+  <!-- participants -->
+  <g font-size="12" font-weight="700" fill="#0f172a" text-anchor="middle">
+    <rect x="46" y="90" width="112" height="54" rx="10" fill="#e0f2fe" stroke="#0284c7"/><text x="102" y="121">Camera</text>
+    <rect x="198" y="90" width="112" height="54" rx="10" fill="#dbeafe" stroke="#2563eb"/><text x="254" y="121">Ingestion</text>
+    <rect x="350" y="90" width="112" height="54" rx="10" fill="#ede9fe" stroke="#7c3aed"/><text x="406" y="121">AI Engine</text>
+    <rect x="502" y="90" width="112" height="54" rx="10" fill="#ede9fe" stroke="#7c3aed"/><text x="558" y="121">Rule Engine</text>
+    <rect x="654" y="90" width="112" height="54" rx="10" fill="#fef3c7" stroke="#d97706"/><text x="710" y="121">Event Store</text>
+    <rect x="806" y="90" width="112" height="54" rx="10" fill="#fef3c7" stroke="#d97706"/><text x="862" y="121">Alert Router</text>
+    <rect x="958" y="90" width="112" height="54" rx="10" fill="#fce7f3" stroke="#db2777"/><text x="1014" y="121">WS Hub</text>
+    <rect x="1110" y="90" width="112" height="54" rx="10" fill="#fce7f3" stroke="#db2777"/><text x="1166" y="121">Dashboard</text>
+  </g>
+
+  <!-- lifelines -->
+  <g stroke="#94a3b8" stroke-dasharray="4 4">
+    <line x1="102" y1="144" x2="102" y2="660"/>
+    <line x1="254" y1="144" x2="254" y2="660"/>
+    <line x1="406" y1="144" x2="406" y2="660"/>
+    <line x1="558" y1="144" x2="558" y2="660"/>
+    <line x1="710" y1="144" x2="710" y2="660"/>
+    <line x1="862" y1="144" x2="862" y2="660"/>
+    <line x1="1014" y1="144" x2="1014" y2="660"/>
+    <line x1="1166" y1="144" x2="1166" y2="660"/>
+  </g>
+
+  <!-- messages -->
+  <g font-size="11" fill="#334155">
+    <line x1="102" y1="180" x2="246" y2="180" stroke="#334155" marker-end="url(#arr)"/>
+    <text x="112" y="172">1. RTSP frames · 640×360 · 3–5 fps (motion-triggered)</text>
+
+    <line x1="254" y1="216" x2="398" y2="216" stroke="#334155" marker-end="url(#arr)"/>
+    <text x="264" y="208">2. decode + resize + motion gate</text>
+
+    <line x1="406" y1="252" x2="550" y2="252" stroke="#334155" marker-end="url(#arr)"/>
+    <text x="416" y="244">3. tracks: (id, class, box, centroid)</text>
+
+    <path d="M 558 278 L 636 278 L 636 300 L 566 300" fill="none" stroke="#334155" marker-end="url(#arr)"/>
+    <text x="646" y="293">4. centroid in zone polygon + cooldown OK</text>
+
+    <line x1="558" y1="330" x2="702" y2="330" stroke="#334155" marker-end="url(#arr)"/>
+    <text x="568" y="322">5. create event (intrusion · high)</text>
+
+    <path d="M 710 356 L 788 356 L 788 378 L 718 378" fill="none" stroke="#334155" marker-end="url(#arr)"/>
+    <text x="798" y="371">6. snapshot saved (JPG)</text>
+
+    <line x1="558" y1="408" x2="854" y2="408" stroke="#334155" marker-end="url(#arr)"/>
+    <text x="620" y="400">7. alert {event}</text>
+
+    <line x1="862" y1="444" x2="1006" y2="444" stroke="#334155" marker-end="url(#arr)"/>
+    <text x="872" y="436">8. push to subscribers</text>
+
+    <line x1="1014" y1="480" x2="1158" y2="480" stroke="#334155" marker-end="url(#arr)"/>
+    <text x="1024" y="472">9. toast + sound + auto-focus camera</text>
+
+    <line x1="1166" y1="520" x2="718" y2="520" stroke="#64748b" stroke-dasharray="6 4" marker-end="url(#arrD)"/>
+    <text x="760" y="512" fill="#64748b">10. operator ACK (REST · audited)</text>
+
+    <line x1="710" y1="556" x2="566" y2="556" stroke="#64748b" stroke-dasharray="6 4" marker-end="url(#arrD)"/>
+    <text x="576" y="548" fill="#64748b">11. status = acknowledged</text>
+
+    <line x1="558" y1="596" x2="702" y2="596" stroke="#334155" marker-end="url(#arr)"/>
+    <text x="568" y="588">12. track exits zone → close event</text>
+
+    <line x1="710" y1="632" x2="854" y2="632" stroke="#334155" marker-end="url(#arr)"/>
+    <text x="720" y="624">13. evidence clip finalised (20 s MP4)</text>
+  </g>
+
+  <text x="40" y="686" font-size="11" fill="#64748b">Reference implementation: backend/events.py (process/_fire/_close) + backend/alerts.py (AlertHub) + /ws/realtime.</text>
+</svg>
