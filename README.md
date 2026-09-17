@@ -1,5 +1,10 @@
 # IBVAP — Intelligent Border Video Analytics Platform
 
+
+https://github.com/user-attachments/assets/30fa2f9e-fb91-4a53-9b51-38630ba44636
+
+
+
 Working reference implementation of the system architecture in
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), for the SSB / MoHA proposal
 (Problem Statement 26187). CPU-only, open-source, zero new BOP hardware.
